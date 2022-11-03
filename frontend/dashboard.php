@@ -10,6 +10,16 @@ if (isset($_GET['logout'])) {
     unset($_SESSION['username']);
     header("location: login.php");
 }
+
+if (isset($_GET['edit_id'])) {
+    $edit_id = $_GET['edit_id'];
+    $house = $db->query("SELECT * FROM houses where id = '$edit_id'")->fetch_assoc();
+}
+
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+    $db->query("DELETE FROM houses where id = '$delete_id'");
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -46,7 +56,7 @@ if (isset($_GET['logout'])) {
             <div class="form-inline my-2 my-lg-0">
             <?php if (isset($_SESSION['username'])) { ?>
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Dropdown
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
@@ -77,9 +87,10 @@ if (isset($_GET['logout'])) {
     <div class="row mx-4 py-4">
         <div class="col-md-4 ">
             <form action="dashboard.php" method="post" enctype="multipart/form-data" class="w-100">
+                <input type="hidden" name="id" value="<?php echo isset($house['id']) ? $house['id'] : ''; ?>">
                 <div class="from-group">
                     <label for="house_name">House Name</label>
-                    <input type="text" id="house_name" name="house_name" require class="form-control">
+                    <input type="text" id="house_name" name="house_name" value="<?php echo isset($house['house_no']) ? $house['house_no'] : ''; ?>" require class="form-control">
                 </div>
                 <div class="form-group">
                     <label >Category</label>
@@ -89,7 +100,7 @@ if (isset($_GET['logout'])) {
                         if($categories->num_rows > 0):
                         while($row= $categories->fetch_assoc()) :
                         ?>
-                        <option value="<?php echo $row['id'] ?>"><?php echo $row['name'] ?></option>
+                        <option <?php echo (isset($house['category_id']) && $house['category_id'] ==  $row['id']) ? 'selected' : ''; ?> value="<?php echo $row['id'] ?>"><?php echo $row['name'] ?></option>
                     <?php endwhile; ?>
                     <?php else: ?>
                         <option selected="" value="" disabled="">Please check the category list.</option>
@@ -98,11 +109,11 @@ if (isset($_GET['logout'])) {
                 </div>
                 <div class="from-group">
                     <label for="flat">Flat</label>
-                    <input type="number" id="flat" name="flat" require class="form-control">
+                    <input type="number" id="flat" value="<?php echo isset($house['flat']) ? $house['flat'] : ''; ?>" name="flat" require class="form-control">
                 </div>
                 <div class="from-group">
                     <label for="unit">Unit</label>
-                    <input type="text" id="unit" name="unit" require class="form-control">
+                    <input type="text" id="unit" value="<?php echo isset($house['unit']) ? $house['unit'] : ''; ?>" name="unit" require class="form-control">
                 </div>
                 <div class="from-group">
                     <label for="images">Image</label>
@@ -110,17 +121,17 @@ if (isset($_GET['logout'])) {
                 </div>
                 <div class="from-group">
                     <label for="description">Description</label>
-                    <textarea class="form-control" name="description" id="" cols="30" rows="10"></textarea>
+                    <textarea class="form-control" name="description" id="" cols="30" rows="10"><?php echo isset($house['description']) ? $house['description'] : ''; ?></textarea>
                 </div>
                 <div class="from-group">
                     <label for="price">Price</label>
-                    <input type="number" id="price" name="price" require class="form-control">
+                    <input type="number" id="price" name="price" value="<?php echo isset($house['price']) ? $house['price'] : ''; ?>" require class="form-control">
                 </div>
                 <div class="from-group">
                     <label for="is_garage">Garage</label>
                     <select class="form-control" name="is_garage" id="">
-                        <option value="1">Yes</option>
-                        <option value="0">No</option>
+                        <option <?php echo isset($house['isGarage']) && $house['isGarage'] == 1? 'selected' : ''; ?> value="1">Yes</option>
+                        <option <?php echo isset($house['isGarage']) && $house['isGarage'] == 0 ? 'selected' : ''; ?> value="0">No</option>
                     </select>
                 </div>
                 <div class="form-group py-4">
@@ -163,17 +174,17 @@ if (isset($_GET['logout'])) {
                         <td class="text-center">
                         <?php
                             if ($row['is_selled'] == 1) {
-                                echo '<span class="badge badge-pill badge-success">Selled</span>';
+                                echo '<span class="badge badge-pill badge-success">Own</span>';
                             }else if ($row['is_selled'] == 2) {
                                 echo '<span class="badge badge-pill badge-warning">Pending</span>';
                             }else {
-                                echo '<span class="badge badge-pill badge-danger">Not Sell</span>';
+                                echo '<span class="badge badge-pill badge-danger">Accepted</span>';
                             }
                             ?>
                         </td>
                         <td class="text-center">
-                            <a class="btn btn-sm btn-primary edit_house" href="dashboard.php?id=<?php echo $row['id'] ?>" >Edit</a>
-                            <a class="btn btn-sm btn-danger delete_house" href="dashboard.php?delete_id=<?php echo $row['id'] ?>">Delete</a>
+                            <a class="btn btn-sm btn-primary" href="dashboard.php?edit_id=<?php echo $row['id'] ?>" >Edit</a>
+                            <a class="btn btn-sm btn-danger" href="dashboard.php?delete_id=<?php echo $row['id'] ?>">Delete</a>
                         </td>
                     </tr>
                     <?php endwhile; ?>

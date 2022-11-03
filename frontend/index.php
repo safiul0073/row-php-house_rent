@@ -35,7 +35,7 @@
             <div class="form-inline my-2 my-lg-0">
             <?php if (isset($_SESSION['username'])) { ?>
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Dropdown
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenu2">

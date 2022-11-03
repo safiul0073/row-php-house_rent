@@ -1,4 +1,10 @@
 <?php include('server.php') ?>
+<?php 
+    $id = $_GET['id'];
+    $sql = "SELECT h.*,c.name as cname FROM houses h inner join categories c on c.id = h.category_id WHERE h.id = '$id'";
+    $result = $db->query($sql);
+    $row = $result->fetch_assoc();
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -9,12 +15,12 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 
-    <title>Hello, world!</title>
+    <title><?php echo $row['house_no']; ?></title>
   </head>
   <body>
     <!-- topbar and navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="./">Property Seller</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -34,7 +40,7 @@
             <div class="form-inline my-2 my-lg-0">
             <?php if (isset($_SESSION['username'])) { ?>
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Dropdown
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
@@ -62,12 +68,7 @@
             </h3>
         </div>
     <?php endif ?>
-    <?php 
-                $id = $_GET['id'];
-                $sql = "SELECT h.*,c.name as cname FROM houses h inner join categories c on c.id = h.category_id WHERE h.id = '$id'";
-                $result = $db->query($sql);
-                $row = $result->fetch_assoc();
-            ?>
+
     <!-- Optional JavaScript; choose one of the two! -->
     <div class="card mx-4" >
         <div class="card-header" >
