@@ -164,4 +164,34 @@ if (isset($_POST['house_save'])) {
 		if($save)
 			return 1;
 }
+
+
+if (isset($_POST['update_owner'])) {
+  $id = mysqli_real_escape_string($db, $_POST['id']);
+  $name = mysqli_real_escape_string($db, $_POST['name']);
+  $username = mysqli_real_escape_string($db, $_POST['username']);
+  $email = mysqli_real_escape_string($db, $_POST['email']);
+  $phone = mysqli_real_escape_string($db, $_POST['phone']);
+  $password = mysqli_real_escape_string($db, $_POST['password']);
+  $image = null;
+  if (empty($username)) { array_push($errors, "Username is required"); }
+  if (empty($email)) { array_push($errors, "Email is required"); }
+  $data = " name = '$name' ";
+  $data .= ", email = '$email' ";
+  $data .= ", username = '$username' ";
+  if ($password) {
+    $data .= ", password = '$password' ";
+  }
+  if( $_FILES['image']["name"]){
+      $uploads_dir = '../assets/uploads';
+      $tmp_name = $_FILES["image"]["tmp_name"];
+      $name = strtotime(date('y-m-d H:i')).'_'.basename($_FILES["image"]["name"]);
+      move_uploaded_file($tmp_name, "$uploads_dir/$name");
+      $data .= ", avater = '$name' ";
+    }
+  if (count($errors) == 0) {
+  	$password = md5($password);//encrypt the password before saving in the database
+    $db->query("UPDATE users set $data where id = $id");
+  }
+}
 ?>

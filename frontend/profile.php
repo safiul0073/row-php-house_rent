@@ -73,65 +73,74 @@ if (isset($_GET['logout'])) {
         </h3>
     </div>
 <?php endif ?>
+
+<?php
+
+    $username = $_SESSION['username'];
+    $user = $db->query("SELECT * FROM users where username = '$username'")->fetch_assoc();
+?>
 <div class=" bootstrap snippets bootdey">
     <hr>
+<form style="width:100% !important;" enctype="multipart/form-data" action="profile.php" method="post" >
 <div class="row mx-4">
     <!-- left column -->
     <div class="col-md-3">
     <div class="text-center">
-        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="avatar img-circle img-thumbnail" alt="avatar">
+        <img src="<?php echo ($user['avater'] ? '../assets/uploads/' .$user['avater'] : 'https://bootdey.com/img/Content/avatar/avatar7.png'); ?>" class="avatar img-circle img-thumbnail" alt="avatar">
         <h6>Upload a different photo...</h6>
         
-        <input type="file" class="form-control">
+        <input type="file" name="image" class="form-control">
     </div>
     </div>
     
     <!-- edit form column -->
     <div class="col-md-9 personal-info">
-    <div class="alert alert-info alert-dismissable">
-        <a class="panel-close close" data-dismiss="alert">×</a> 
-        <i class="fa fa-coffee"></i>
-        This is an <strong>.alert</strong>. Use this to show important messages to the user.
-    </div>
     <h3>Personal info</h3>
     
-    <form action="profile.php" method="post" >
+ 
     <div class="form-horizontal">
         <div class="form-group">
-            <label class="col-lg-3 control-label">First name:</label>
+            <input type="hidden" name="id" value="<?php echo $user['id']; ?>" >
+            <label class="col-lg-3 control-label">Name:</label>
             <div class="col-lg-8">
-            <input class="form-control" type="text" value="dey-dey">
+            <input class="form-control" type="text" name="name" value="<?php echo $user['name'] ?>" >
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg-3 control-label">Last name:</label>
+            <label class="col-lg-3 control-label">Username:</label>
             <div class="col-lg-8">
-            <input class="form-control" type="text" value="bootdey">
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-3 control-label">Company:</label>
-            <div class="col-lg-8">
-            <input class="form-control" type="text" value="">
+            <input class="form-control" type="text" name="username" value="<?php echo $user['username'] ?>" >
             </div>
         </div>
         <div class="form-group">
             <label class="col-lg-3 control-label">Email:</label>
             <div class="col-lg-8">
-            <input class="form-control" type="text" value="janesemail@gmail.com">
+            <input class="form-control" type="email" value="<?php echo $user['email'] ?>" name="email">
             </div>
         </div>
-        <div>
+        <div class="form-group">
+            <label class="col-lg-3 control-label">Phone:</label>
+            <div class="col-lg-8">
+            <input class="form-control" type="number" value="<?php echo $user['phone'] ?>" name="phone" value="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-3 control-label">Password:</label>
+            <div class="col-lg-8">
+            <input class="form-control" type="password" name="password">
+            </div>
+        </div>
+        <div class="col-lg-8">
             <button type="submit" name="update_owner" class="btn btn-block btn-success">Save</button>
         </div>
         </div>
-    </form>
+    
     </div>
 
 </div>
 </div>
 <hr>
-    
+</form> 
 </div>
 
 <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
