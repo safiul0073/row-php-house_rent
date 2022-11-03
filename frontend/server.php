@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 // initializing variables
 $username = "";
 $email    = "";
@@ -108,78 +107,61 @@ if (isset($_POST['contuct_user'])) {
   }
 }
 
-// contact USER
-if (isset($_POST['store_product'])) {
-  $name = mysqli_real_escape_string($db, $_POST['name']);
-  $category = mysqli_real_escape_string($db, $_POST['category']);
-  $size = mysqli_real_escape_string($db, $_POST['size']);
-  $quantity = mysqli_real_escape_string($db, $_POST['quantity']);
-  $price = mysqli_real_escape_string($db, $_POST['price']);
-  $image = null;
-  if (!empty($_FILES["image"]["name"])) {
-        $fileName = basename($_FILES["image"]["name"]); 
-        $fileType = pathinfo($fileName, PATHINFO_EXTENSION); 
-        // Allow certain file formats 
-        // $allowTypes = array('jpg','png','jpeg','gif'); 
-        // if(in_array($fileType, $allowTypes)){
-            $image = $_FILES['image']['tmp_name']; 
-            $image = addslashes(file_get_contents($image)); 
-        // }
-  }
-  if (empty($name)) {
-  	array_push($errors, "Product Name is required");
-  }
-  if (empty($category)) {
-  	array_push($errors, "Category is required");
-  }
-
-  if (count($errors) == 0) {
-  	
-  	$query = "INSERT INTO products (name, category, size, quantity, price, image) 
-  			  VALUES('$name', '$category', '$size', '$quantity', '$price', '$image')";
-  	mysqli_query($db, $query);
-  	header('location: product.php');
-  	
-  }
-}
-// update_product
-if (isset($_POST['update_product'])) {
-  $name = mysqli_real_escape_string($db, $_POST['name']);
-  $category = mysqli_real_escape_string($db, $_POST['category']);
-  $size = mysqli_real_escape_string($db, $_POST['size']);
-  $quantity = mysqli_real_escape_string($db, $_POST['quantity']);
-  $price = mysqli_real_escape_string($db, $_POST['price']);
-  $id = mysqli_real_escape_string($db, $_POST['id']);
-  if (!$id) return array_push($errors, "Select Id");
-  $image = null;
-  if (!empty($_FILES["image"]["name"])) {
-        $fileName = basename($_FILES["image"]["name"]); 
-        $fileType = pathinfo($fileName, PATHINFO_EXTENSION); 
-        // Allow certain file formats 
-        // $allowTypes = array('jpg','png','jpeg','gif'); 
-        // if(in_array($fileType, $allowTypes)){
-            $image = $_FILES['image']['tmp_name']; 
-            $image = addslashes(file_get_contents($image)); 
-        // }
-  }
-  if (empty($name)) {
-  	array_push($errors, "Product Name is required");
-  }
-  if (empty($category)) {
-  	array_push($errors, "Category is required");
-  }
-
-  if (count($errors) == 0) {
-  	
-  	$query = "UPDATE products set name='$name', category='$category', size='$size', quantity='$quantity', price='$price', image='$image' where id='$id'";
-  	mysqli_query($db, $query);
-  	header('location: product.php');
-  	
-  }
-}
 
 if (isset($_POST['purches_house'])) {
   
+  $house_id = mysqli_real_escape_string($db, $_POST['house_id']);
+  $house = $db->query("SELECT id, price FROM houses  WHERE id = '$house_id'")->fetch_assoc();
+  $username = $_SESSION['username'];
+  $user = $db->query("SELECT id,username FROM users  WHERE username = '$username'")->fetch_assoc();
+  $price = $house['price'];
+  $user_id = $user['id'];
+  $query = "INSERT INTO purches (house_id, user_id, price) 
+  VALUES('$house_id', '$user_id', '$price')";
+  mysqli_query($db, $query);
+  $data = " is_selled = '1' ";
+  $data .= ", owner_id = '$user_id'";
+  $db->query("UPDATE houses set $data where id = $house_id");
+  $_SESSION['success'] = "Succefully Purchesed";
+  
 }
 
+if (isset($_POST['house_save'])) {
+  $username = $_SESSION["username"];
+  $user = $db->query("SELECT * FROM users where username = '$username'")->fetch_assoc();
+  $user_id = $user['id'];
+  extract($_POST);
+		$data = " house_no = '$house_name' ";
+		$data .= ", description = '$description' ";
+		$data .= ", category_id = '$category_id' ";
+		$data .= ", flat = '$flat' ";
+		$data .= ", unit = '$unit' ";
+		$data .= ", price = '$price' ";
+    $data .= ", isGarage = '$is_garage' ";
+    $data .= ", is_selled = '2' ";
+    $data .= ", owner_id = '$user_id ' ";
+
+		if( count($_FILES['images']) > 0 ){
+			$image_names = '';
+			$uploads_dir = '../assets/uploads';
+			foreach ($_FILES["images"]["error"] as $key => $error) {
+				if ($error == UPLOAD_ERR_OK) {
+					$tmp_name = $_FILES["images"]["tmp_name"][$key];
+					$name = strtotime(date('y-m-d H:i')).'_'.basename($_FILES["images"]["name"][$key]);
+					move_uploaded_file($tmp_name, "$uploads_dir/$name");
+					$image_names .= $name.',';
+				}
+			}
+			$data .= ", image = '$image_names' ";
+		
+		}
+
+			if(empty($id)){
+				$save = $db->query("INSERT INTO houses set $data");
+			}else{
+				$save = $db->query("UPDATE houses set $data where id = $id");
+			}
+		if($save)
+			return 1;
+}
 ?>

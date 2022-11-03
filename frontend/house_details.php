@@ -22,7 +22,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="./index.php">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="./">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Houses</a>
@@ -33,7 +33,17 @@
             </ul>
             <div class="form-inline my-2 my-lg-0">
             <?php if (isset($_SESSION['username'])) { ?>
-                <a class="btn btn-sm btn-outline-danger" href="./login.php">Logout</a>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <a class="dropdown-item" href="./dashboard.php" >Dashboard</a>
+                        <a class="dropdown-item" href="./profile.php" >Profile</a>
+                        <a class="dropdown-item" href="./login.php" >Logout</a>
+                    </div>
+                </div>
+                
             <?php } else {  ?>
                 <a class="btn btn-sm btn-outline-primary mr-2" href="./login.php">Login</a>
                 <a class="btn btn-sm btn-outline-primary" href="./register.php">SignUp</a>
@@ -42,6 +52,16 @@
         </div>
     
     </nav>
+    <?php if (isset($_SESSION['success'])) : ?>
+        <div class="alert alert-success">
+            <h3>
+                <?php
+                echo $_SESSION['success'];
+                unset($_SESSION['success']);
+                ?>
+            </h3>
+        </div>
+    <?php endif ?>
     <?php 
                 $id = $_GET['id'];
                 $sql = "SELECT h.*,c.name as cname FROM houses h inner join categories c on c.id = h.category_id WHERE h.id = '$id'";
@@ -51,27 +71,56 @@
     <!-- Optional JavaScript; choose one of the two! -->
     <div class="card mx-4" >
         <div class="card-header" >
-            <h1 class="card-title"><?php echo $row['name']; ?></h1>
+            <h1 class="card-title">House Number: <?php echo $row['house_no']; ?></h1>
         </div>
         <div class="card-body">
             <div class="row py-5">
                 <div class="col-md-6">
                     <div id="carouselExampleIndicators" class="carousel slide mx-auto" data-ride="carousel">
                         <ol class="carousel-indicators">
+                        <?php 
+                                if (!$row['image']) {
+                            ?>
                             <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                             <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
                             <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                            <?php 
+                                }else {
+                                    $array_images = explode(',', $row['image'] );
+                                    $count = count($array_images);
+                                    for ($i = 0; $i < $count - 1;  $i++) {
+                            ?>  
+                                    <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo $i; ?>" class="<?php echo ($i == 0 ? "active" : ""); ?>"></li>
+                            <?php 
+                                    }
+                                }
+                            ?>
+
                         </ol>
                         <div class="carousel-inner">
-                            <div class="carousel-item active">
-                            <img src="../assets/images/house1.jpg" height="550" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                            <img src="../assets/images/house2.jpg" height="550" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                            <img src="../assets/images/house3.jpg" height="550" class="d-block w-100" alt="...">
-                            </div>
+                            <?php 
+                                if (!$row['image']) {
+                            ?>
+                                <div class="carousel-item active">
+                                <img src="../assets/images/house1.jpg" height="550" class="d-block w-100" alt="...">
+                                </div>
+                                <div class="carousel-item">
+                                <img src="../assets/images/house2.jpg" height="550" class="d-block w-100" alt="...">
+                                </div>
+                                <div class="carousel-item">
+                                <img src="../assets/images/house3.jpg" height="550" class="d-block w-100" alt="...">
+                                </div>
+                            <?php 
+                                }else {
+                                    for ($i = 0; $i < $count - 1;  $i++) {
+                            ?>  
+                                      <div class="carousel-item <?php echo ($i == 0 ? "active" : ""); ?>">
+                                        <img src="../assets/uploads/<?php echo $array_images[$i]; ?>" height="550" class="d-block w-100" alt="...">
+                                      </div>
+                            <?php 
+                                    }
+                                }
+                            ?>
                         </div>
                         <button class="carousel-control-prev" type="button" data-target="#carouselExampleIndicators" data-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -98,7 +147,7 @@
                         <?php
                         }else {
                             ?> 
-                            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#exampleModal">Purchase Now</button>
+                            <button type="button" class="btn btn-outline-secondary" <?php echo ($row['is_selled'] ? 'disabled' : ''); ?> data-toggle="modal" data-target="#exampleModal">Purchase Now</button>
                             <?php
                             }
                             ?>
@@ -132,11 +181,11 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="" method="post">
-        <input type="hidden" name="house_id" value="<?php $row['id']; ?>">
+      <form action="house_details.php?id=<?php echo $row['id'] ?>" method="post">
+        <input type="hidden" name="house_id" value="<?php echo $row['id']; ?>">
         <div class="modal-body">
             <div class="py-3">
-                <h3 class="text-left text-dark">House Name: <?php echo $row['name']; ?></h3>
+                <h3 class="text-left text-dark">House Number: <?php echo $row['house_no']; ?></h3>
                 <h3 class="text-left text-dark">Price: <span><?php echo $row['price']; ?>tk</span></h3>
                 <h3 class="text-left text-dark">Flat: <span><?php echo $row['flat']; ?></span></h3>
                 <h3 class="text-left text-dark">Unit: <span><?php  echo $row['unit']; ?></span></h3>

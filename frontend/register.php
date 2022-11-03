@@ -23,7 +23,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="./">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Houses</a>
@@ -62,6 +62,13 @@
                     <div class="input-group">
                     <label>Phone</label>
                     <input type="number" name="phone" value="<?php echo $phone; ?>">
+                    </div>
+                    <div class="input-group">
+                    <label>User Type</label>
+                    <select name="user_type"  id="">
+                        <option value="2">Owner</option>
+                        <option value="0">Normal User</option>
+                    </select>
                     </div>
                     <div class="input-group">
                     <label>Password</label>

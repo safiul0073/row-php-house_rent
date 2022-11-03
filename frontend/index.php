@@ -10,12 +10,12 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <title>Hello, world!</title>
+    <title>Property Seller</title>
   </head>
   <body>
     <!-- topbar and navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="./">Property Seller</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -23,7 +23,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="./">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Houses</a>
@@ -34,7 +34,20 @@
             </ul>
             <div class="form-inline my-2 my-lg-0">
             <?php if (isset($_SESSION['username'])) { ?>
-                <a class="btn btn-sm btn-outline-danger" href="./login.php">Logout</a>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <a class="dropdown-item" href="./dashboard.php" >Dashboard</a>
+                        <a class="dropdown-item" href="./profile.php" >Profile</a>
+                        <a onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();" class="dropdown-item" href="./login.php" >Logout</a>
+                         <form id="logout-form" action="logout.php" method="POST" class="d-none">
+                            
+                        </form>
+                    </div>
+                </div>
             <?php } else {  ?>
                 <a class="btn btn-sm btn-outline-primary mr-2" href="./login.php">Login</a>
                 <a class="btn btn-sm btn-outline-primary" href="./register.php">SignUp</a>
@@ -84,9 +97,8 @@
     <!-- Optional JavaScript; choose one of the two! -->
     
     <?php
-        $houses = "SELECT h.*,c.name as cname FROM houses h inner join categories c on c.id = h.category_id order by id asc";
+        $houses = "SELECT h.*,c.name as cname FROM houses h inner join categories c on c.id = h.category_id where h.is_selled = 0 order by id asc";
         $results = $db->query($houses);
-        var_dump($results);
     ?>
     <div class="card mx-4" >
         <div class="card-header" >
@@ -99,13 +111,16 @@
                     foreach ( $results as $result ) {
                         ?>
 
-                <div class="card col-md-4">
-                    <img src="../assets/images/house1.jpg" class="card-img-top" alt="...">
+                <div class="col-md-4">
+                    <div class="card my-3">
+                    <img src="../assets/uploads/<?php echo ( $result['image'] ? explode(',', $result['image'])[0]  : ''); ?>" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h5 class="card-title">Hello house</h5>
-                        <p class="card-text"><?php echo $result['description'] ?></p>
+                        <h5 class="card-title">Hello No: <?php echo $result['house_no'] ?></h5>
+                        <h5 class="card-title">Price: <?php echo $result['price'] ?></h5>
                         <a href="house_details.php?id=<?php echo $result['id'] ?>" class="btn btn-primary">See More</a>
                     </div>
+                    </div>
+
                 </div>
 
                 <?php 

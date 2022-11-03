@@ -1,5 +1,24 @@
 <?php include('db_connect.php');?>
+<?php
 
+if (isset($_GET["house_id"])){
+	$house_id = $_GET['house_id'];
+	$save = $conn->query("UPDATE houses set is_selled = 0 where id = '$house_id'");
+	if ($save) {
+		$_SESSION['success'] = "Succefully Accepted";
+	}
+}
+?>
+	<?php if (isset($_SESSION['success'])) : ?>
+		<div class="error success">
+			<h3>
+				<?php
+				echo $_SESSION['success'];
+				unset($_SESSION['success']);
+				?>
+			</h3>
+		</div>
+	<?php endif ?>
 <div class="container-fluid">
 	
 	<div class="col-lg-12">
@@ -80,6 +99,7 @@
 									<th class="text-center">#</th>
 									<th class="text-center">House</th>
 									<th class="text-center">Image</th>
+									<th class="text-center">Status</th>
 									<th class="text-center">Action</th>
 								</tr>
 							</thead>
@@ -97,10 +117,30 @@
 										<p><small>Description: <b><?php echo $row['description'] ?></b></small></p>
 										<p><small>Price: <b><?php echo number_format($row['price'],2) ?></b></small></p>
 									</td>
-									<!-- <td><img src="assets/uploads/<?php echo $row['image'] ?>" height="50" width="60" alt="..."></td> -->
+									<td>
+										<img src="assets/uploads/<?php echo $row['image'] ? explode(',', $row['image'])[0] : '' ?>" height="50" width="60" alt="...">
+									</td>
 									<td class="text-center">
+											<?php
+											if ($row['is_selled'] == 1) {
+												echo '<span class="badge badge-pill badge-success">Selled</span>';
+											}else if ($row['is_selled'] == 2) {
+												echo '<span class="badge badge-pill badge-warning">Pending</span>';
+											}else {
+												echo '<span class="badge badge-pill badge-danger">Not Sell</span>';
+											}
+											?>
+										</td>
+									<td class="text-center">
+										<a href="./frontend/house_details.php?id=<?php echo $row['id'] ?>" class="btn btn-primary">Show</a>
 										<button class="btn btn-sm btn-primary edit_house" type="button" data-id="<?php echo $row['id'] ?>"  data-house_no="<?php echo $row['house_no'] ?>" data-description="<?php echo $row['description'] ?>" data-category_id="<?php echo $row['category_id'] ?>" data-price="<?php echo $row['price'] ?>" >Edit</button>
-										<button class="btn btn-sm btn-danger delete_house" type="button" data-id="<?php echo $row['id'] ?>">Delete</button>
+										<button class="btn btn-sm btn-danger delete_house my-2" type="button" data-id="<?php echo $row['id'] ?>">Delete</button>
+
+										<?php 
+										if ($row['is_selled'] == 2) {
+											echo '<a class="btn btn-sm btn-secondary" href="index.php?page=houses&house_id='.$row['id'].'" >Accept</button>';
+										}
+										?>
 									</td>
 								</tr>
 								<?php endwhile; ?>
