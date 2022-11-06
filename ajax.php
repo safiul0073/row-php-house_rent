@@ -26,7 +26,7 @@ if($action == 'logout2'){
 if($action == 'save_user'){
 	$save = $crud->save_user();
 	if($save)
-		echo $save;
+		echo (int) $save;
 }
 if($action == 'delete_user'){
 	$save = $crud->delete_user();

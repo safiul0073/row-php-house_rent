@@ -22,6 +22,14 @@ foreach($user->fetch_array() as $k =>$v){
 			<input type="text" name="username" id="username" class="form-control" value="<?php echo isset($meta['username']) ? $meta['username']: '' ?>" required  autocomplete="off">
 		</div>
 		<div class="form-group">
+			<label for="email">Email</label>
+			<input type="text" name="email" id="email" class="form-control" value="<?php echo isset($meta['email']) ? $meta['email']: '' ?>" required  autocomplete="off">
+		</div>
+		<div class="form-group">
+			<label for="phone">Phone</label>
+			<input type="text" name="phone" id="phone" class="form-control" value="<?php echo isset($meta['phone']) ? $meta['phone']: '' ?>" required  autocomplete="off">
+		</div>
+		<div class="form-group">
 			<label for="password">Password</label>
 			<input type="password" name="password" id="password" class="form-control" value="" autocomplete="off">
 			<?php if(isset($meta['id'])): ?>
@@ -35,7 +43,7 @@ foreach($user->fetch_array() as $k =>$v){
 		<div class="form-group">
 			<label for="type">User Type</label>
 			<select name="type" id="type" class="custom-select">
-				<option value="2" <?php echo isset($meta['type']) && $meta['type'] == 2 ? 'selected': '' ?>>Staff</option>
+				<option value="2" <?php echo isset($meta['type']) && $meta['type'] == 2 ? 'selected': '' ?>>User</option>
 				<option value="1" <?php echo isset($meta['type']) && $meta['type'] == 1 ? 'selected': '' ?>>Admin</option>
 			</select>
 		</div>
@@ -49,17 +57,23 @@ foreach($user->fetch_array() as $k =>$v){
 	
 	$('#manage-user').submit(function(e){
 		e.preventDefault();
-		start_load()
+        start_load()
+        $('#msg').html('')
 		$.ajax({
 			url:'ajax.php?action=save_user',
-			method:'POST',
-			data:$(this).serialize(),
-			success:function(resp){
-				if(resp ==1){
+			data: new FormData($(this)[0]),
+		    cache: false,
+		    contentType: false,
+		    processData: false,
+		    method: 'POST',
+		    type: 'POST',
+			success:function(res){
+	
+				if(res == 1){
 					alert_toast("Data successfully saved",'success')
 					setTimeout(function(){
 						location.reload()
-					},1500)
+					},1000)
 				}else{
 					$('#msg').html('<div class="alert alert-danger">Username already exist</div>')
 					end_load()

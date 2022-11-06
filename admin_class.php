@@ -87,13 +87,16 @@ Class Action {
 		extract($_POST);
 		$data = " name = '$name' ";
 		$data .= ", username = '$username' ";
+		$data .= ", email = '$email' ";
+		$data .= ", phone = '$phone' ";
 		if(!empty($password))
 		$data .= ", password = '".md5($password)."' ";
 		$data .= ", type = '$type' ";
-		if($type == 1)
-			$establishment_id = 0;
-		$data .= ", establishment_id = '$establishment_id' ";
-		$chk = $this->db->query("Select * from users where username = '$username' and id !='$id' ")->num_rows;
+		$chk = 0;
+		if (!$id) {
+			$chk = $this->db->query("SELECT * from users where username = '$username' ")->num_rows;
+		}
+		
 		if($chk > 0){
 			return 2;
 			exit;
@@ -116,39 +119,18 @@ Class Action {
 	function signup(){
 		extract($_POST);
 		$data = " name = '".$firstname.' '.$lastname."' ";
-		$data .= ", username = '$email' ";
+		$data .= ", username = '$username' ";
 		$data .= ", password = '".md5($password)."' ";
-		$chk = $this->db->query("SELECT * FROM users where username = '$email' ")->num_rows;
+		var_dump($data);
+		$chk = $this->db->query("SELECT * FROM users where username = '$username' ")->num_rows();
 		if($chk > 0){
 			return 2;
 			exit;
 		}
 			$save = $this->db->query("INSERT INTO users set ".$data);
 		if($save){
-			$uid = $this->db->insert_id;
-			$data = '';
-			foreach($_POST as $k => $v){
-				if($k =='password')
-					continue;
-				if(empty($data) && !is_numeric($k) )
-					$data = " $k = '$v' ";
-				else
-					$data .= ", $k = '$v' ";
-			}
-			if($_FILES['img']['tmp_name'] != ''){
-							$fname = strtotime(date('y-m-d H:i')).'_'.$_FILES['img']['name'];
-							$move = move_uploaded_file($_FILES['img']['tmp_name'],'assets/uploads/'. $fname);
-							$data .= ", avatar = '$fname' ";
-
-			}
-			$save_alumni = $this->db->query("INSERT INTO alumnus_bio set $data ");
-			if($data){
-				$aid = $this->db->insert_id;
-				$this->db->query("UPDATE users set alumnus_id = $aid where id = $uid ");
-				$login = $this->login2();
-				if($login)
-				return 1;
-			}
+			$_SESSION['success'] = "New user added successfully.";
+			return 1;
 		}
 	}
 	function update_account(){

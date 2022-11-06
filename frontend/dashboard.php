@@ -96,6 +96,10 @@ if (isset($_GET['delete_id'])) {
                     <label >Category</label>
                     <select name="category_id" id="" class="custom-select" required>
                         <?php 
+                        if (!isset($_SESSION['username'])) {
+                            $_SESSION['msg'] = "You must log in first";
+                            header('location: login.php');
+                        }
                         $categories = $db->query("SELECT * FROM categories order by name asc");
                         if($categories->num_rows > 0):
                         while($row= $categories->fetch_assoc()) :

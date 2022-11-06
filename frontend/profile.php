@@ -75,6 +75,7 @@ if (isset($_GET['logout'])) {
 <?php endif ?>
 
 <?php
+var_dump($_SESSION['username']);
 
     $username = $_SESSION['username'];
     $user = $db->query("SELECT * FROM users where username = '$username'")->fetch_assoc();
@@ -86,7 +87,7 @@ if (isset($_GET['logout'])) {
     <!-- left column -->
     <div class="col-md-3">
     <div class="text-center">
-        <img src="<?php echo ($user['avater'] ? '../assets/uploads/' .$user['avater'] : 'https://bootdey.com/img/Content/avatar/avatar7.png'); ?>" class="avatar img-circle img-thumbnail" alt="avatar">
+        <img src="<?php echo (isset($user['avater']) ? '../assets/uploads/' .$user['avater'] : 'https://bootdey.com/img/Content/avatar/avatar7.png'); ?>" class="avatar img-circle img-thumbnail" alt="avatar">
         <h6>Upload a different photo...</h6>
         
         <input type="file" name="image" class="form-control">
@@ -100,7 +101,7 @@ if (isset($_GET['logout'])) {
  
     <div class="form-horizontal">
         <div class="form-group">
-            <input type="hidden" name="id" value="<?php echo $user['id']; ?>" >
+            <input type="hidden" name="id" value="<?php echo isset($user['id']); ?>" >
             <label class="col-lg-3 control-label">Name:</label>
             <div class="col-lg-8">
             <input class="form-control" type="text" name="name" value="<?php echo $user['name'] ?>" >
