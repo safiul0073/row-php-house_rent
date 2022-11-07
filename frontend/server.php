@@ -51,9 +51,7 @@ if (isset($_POST['reg_user'])) {
   			  VALUES('$name', '$email', '$phone', '$username', '$password', 2)";
   	mysqli_query($db, $query);
 
-  	$_SESSION['username'] = $username;
-  	$_SESSION['success'] = "You are now logged in";
-  	header('location: index.php');
+  	header('location: login.php');
   }
 }
 

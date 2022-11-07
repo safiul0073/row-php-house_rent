@@ -57,6 +57,7 @@ $month_of = isset($_GET['month_of']) ? $_GET['month_of'] : date('Y-m');
 										<th>Date</th>
 										<th>Owner</th>
 										<th>House #</th>
+										<th>Category</th>
 										<th>Seller</th>
 										<th>Price</th>
 									</tr>
@@ -65,15 +66,21 @@ $month_of = isset($_GET['month_of']) ? $_GET['month_of'] : date('Y-m');
 									<?php 
 									$i = 1;
 									$tamount = 0;
-									$purches  = $conn->query("SELECT p.*, u.name as name, o.name as seller, h.house_no as house  from purches p inner join houses h on h.id = p.house_id inner join users o on o.id = p.seller_id  inner join users u on u.id = p.user_id where date_format(p.created_at,'%Y-%m') = '$month_of' order by unix_timestamp(created_at)  desc");
+									$purches  = $conn->query("SELECT p.*, u.name as name, o.name as seller, h.house_no as house, h.category_id as category   from purches p inner join houses h on h.id = p.house_id inner join users o on o.id = p.seller_id  inner join users u on u.id = p.user_id where date_format(p.created_at,'%Y-%m') = '$month_of' order by unix_timestamp(created_at)  desc");
 									if($purches->num_rows > 0 ):
 									while($row=$purches->fetch_assoc()):
+										$category_id = $row['category']
 									?>
 									<tr>
 										<td><?php echo $i++ ?></td>
 										<td><?php echo date('d M, Y',strtotime($row['created_at'])) ?></td>
 										<td><?php echo ucwords($row['name']) ?></td>
 										<td><?php echo $row['house'] ?></td>
+										<td>
+										<?php 
+										$cat = $conn->query("SELECT * from categories where id = '$category_id' ")->fetch_assoc();
+										echo $cat['name'];
+										?></td>
 										<td><?php echo $row['seller'] ?></td>
 										<td class="text-right"><?php echo number_format($row['price'],2) ?></td>
 									</tr>
