@@ -108,20 +108,38 @@ if (isset($_POST['contuct_user'])) {
 
 if (isset($_POST['purches_house'])) {
   
-  $house_id = mysqli_real_escape_string($db, $_POST['house_id']);
-  $house = $db->query("SELECT id, price, owner_id FROM houses  WHERE id = '$house_id'")->fetch_assoc();
-  $username = $_SESSION['username'];
-  $user = $db->query("SELECT id,username FROM users  WHERE username = '$username'")->fetch_assoc();
-  $price = $house['price'];
-  $user_id = $user['id'];
-  $owner_id = $house['owner_id'];
+  // $house_id = mysqli_real_escape_string($db, $_POST['house_id']);
+  // $house = $db->query("SELECT id, price, owner_id FROM houses  WHERE id = '$house_id'")->fetch_assoc();
+  // $username = $_SESSION['username'];
+  // $user = $db->query("SELECT id,username FROM users  WHERE username = '$username'")->fetch_assoc();
+  // $price = $house['price'];
+  // $user_id = $user['id'];
+  // $owner_id = $house['owner_id'];
 
-  $query = "INSERT INTO purches (house_id, seller_id, user_id, price) 
-  VALUES('$house_id', '$owner_id', '$user_id', '$price')";
-  mysqli_query($db, $query);
-  $data = " is_selled = '1' ";
-  $data .= ", owner_id = '$user_id'";
-  $db->query("UPDATE houses set $data where id = $house_id");
+  // $query = "INSERT INTO purches (house_id, seller_id, user_id, price) 
+  // VALUES('$house_id', '$owner_id', '$user_id', '$price')";
+  // mysqli_query($db, $query);
+  // $data = " is_selled = '1' ";
+  // $data .= ", owner_id = '$user_id'";
+  // $db->query("UPDATE houses set $data where id = $house_id");
+
+  $to = 'parsonal494@gmail.com'; 
+  $from = 'safiul7303@gmail.com'; 
+  $fromName = 'Sender_Name'; 
+  
+  $subject = "Send Text Email with PHP by CodexWorld"; 
+  
+  $message = "First line of text\nSecond line of text"; 
+  
+  // Additional headers 
+  $headers = 'From: '.$fromName.'<'.$from.'>'; 
+  
+  // Send email 
+  if(mail($to, $subject, $message, $headers)){ 
+    echo 'Email has sent successfully.'; 
+  }else{ 
+    echo 'Email sending failed.'; 
+  }
   $_SESSION['success'] = "Succefully Purchesed";
   
 }
