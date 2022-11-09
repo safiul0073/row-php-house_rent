@@ -114,6 +114,8 @@ if (isset($_GET["house_id"])){
 									<td class="">
 										<p>House #: <b><?php echo $row['house_no'] ?></b></p>
 										<p><small>House Type: <b><?php echo $row['cname'] ?></b></small></p>
+										<p><small>Flat: <b><?php echo $row['flat'] ?></b></small></p>
+										<p><small>Unit: <b><?php echo $row['unit'] ?></b></small></p>
 										<p><small>Description: <b><?php echo $row['description'] ?></b></small></p>
 										<p><small>Price: <b><?php echo number_format($row['price'],2) ?></b></small></p>
 									</td>

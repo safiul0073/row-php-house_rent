@@ -12,6 +12,37 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <link href="../assets/css/frontend.css" rel="stylesheet">
     <title>Property Seller</title>
+    <style>
+        .search-label {
+            color: #730000;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #search-box {
+            border-radius: 10px;
+            height: 50px;
+            padding: 6px 4px 5px 10px;
+            outline: none;
+            border: 1px solid #730000;
+            width: 100%;
+        }
+
+        .search-button {
+            width: 50%;
+            color: #000;
+            padding: 5px;
+            height: 50px;
+            background: #fff;
+            border: 1px solid #730000;
+            border-radius: 10px;
+
+        }
+        .search-button:hover {
+            color: #fff;
+            background: #730000;
+        }
+    </style>
 </head>
 
 <body>
@@ -114,10 +145,31 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <?php
-    $houses = "SELECT h.*,c.name as cname FROM houses h inner join categories c on c.id = h.category_id where h.is_selled = 0 order by id asc";
+    $search = isset($_GET['search']) ? $_GET['search'] : null;
+    $houses = [];
+    if ($search) {
+        $houses = "SELECT h.*,c.name as cname FROM houses h inner join categories c on c.id = h.category_id where h.is_selled = 0 and address like '$search' order by id asc";
+    }else {
+        $houses = "SELECT h.*,c.name as cname FROM houses h inner join categories c on c.id = h.category_id where h.is_selled = 0 order by id asc";
+    }
+    
     $results = $db->query($houses);
     ?>
-
+    <div class="row mt-5">
+        <div class="col-md-8 mx-auto">
+            <form style="" method="get" action="index.php" class="row">
+                <div class="col-md-3">
+                    <label class="search-label" for="search">Search by Aera</label>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" name="search" id="search-box" placeholder="Search..." autocomplete="off">
+                </div>
+                <div class="col-md-3">
+                <button type="submit" class="search-button">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="rh-section">
         <div class="container">
             <h4 class="rh-sub-title">Properties by Area</h4>
@@ -174,7 +226,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-3">
-                    <img class="img-fluid w-full" src="../assets/images/BH-Trans-pkokm55gbbpx6afuyopf69jknkt3hhlqx8rabrmtck.png" alt="">
+                    <img class="img-fluid w-full" src="../assets/images/saiful.jpg" alt="">
+                    <h2 class="text-center pt-3">Md Saiful Islam</h2>
                 </div>
                 <div class="col-sm-6">
                     <div class="rh-paragraph-wrapper">
@@ -184,7 +237,8 @@
                     </div>
                 </div>
                 <div class="col-sm-3">
-                    <img class="img-fluid w-full" src="../assets/images/BH-Trans-pkokm55gbbpx6afuyopf69jknkt3hhlqx8rabrmtck.png" alt="">
+                    <img class="img-fluid w-full" height="300" width="300" src="../assets/images/asib.jpg" alt="">
+                    <h2 class="text-center pt-3">Md Asib Ali</h2>
                 </div>
             </div>
         </div>

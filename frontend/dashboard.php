@@ -175,9 +175,12 @@ if (isset($_GET['delete_id'])) {
                     $user = $db->query("SELECT * FROM users where username = '$username'")->fetch_assoc();
                     $user_id = $user['id'];
                     $i = 1;
-                    $house = $db->query("SELECT h.*,c.name as cname, p.user_id as user  FROM houses h inner join categories c on c.id = h.category_id inner join purches p on p.house_id = h.id  order by id asc");
+                    $house = $db->query("SELECT h.*,c.name as cname  FROM houses h join categories c on c.id = h.category_id  order by id asc");
                     while($row=$house->fetch_assoc()):
-                        if ($row['user'] == $user_id || $row['owner_id'] == $user_id) {
+                        $houseId = $row['id'];
+                        $purches = $db->query("SELECT * FROM purches where house_id = '$houseId' and user_id = '$user_id'")->fetch_assoc();
+
+                        if (( isset($purches) && $purches) || $row['owner_id'] == $user_id) {
                     ?>
                     <tr>
                         <td class="text-center"><?php echo $i++ ?></td>
@@ -207,7 +210,7 @@ if (isset($_GET['delete_id'])) {
                         </td>
                         <td class="text-center">
                             <?php 
-                                if ($row['user'] == $user_id) {
+                                if ($purches) {
                                     ?>
                                         <a class="btn btn-sm btn-secondary" href="house_details.php?id=<?php echo $row['id'] ?>">View</a>
                                     <?php

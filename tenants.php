@@ -27,25 +27,21 @@
 									<th class="text-center">#</th>
 									<th class="">Name</th>
 									<th class="">House Rented</th>
-									<th class="">Monthly Rate</th>
-									<th class="">Outstanding Balance</th>
-									<th class="">Last Payment</th>
-									<th class="text-center">Action</th>
+									<th class="">Total Rate</th>
+									<th class="">House Rental</th>
+									<th class="">Rented Houses</th>
+									<!-- <th class="text-center">Action</th> -->
 								</tr>
 							</thead>
 							<tbody>
 								<?php 
 								$i = 1;
-								$tenant = $conn->query("SELECT t.*,concat(t.lastname,', ',t.firstname,' ',t.middlename) as name,h.house_no,h.price FROM tenants t inner join houses h on h.id = t.house_id where t.status = 1 order by h.house_no desc ");
+								$tenant = $conn->query("SELECT * FROM users  where type = 2 order by id DESC ");
 								while($row=$tenant->fetch_assoc()):
-									$months = abs(strtotime(date('Y-m-d')." 23:59:59") - strtotime($row['date_in']." 23:59:59"));
-									$months = floor(($months) / (30*60*60*24));
-									$payable = $row['price'] * $months;
-									$paid = $conn->query("SELECT SUM(amount) as paid FROM payments where tenant_id =".$row['id']);
-									$last_payment = $conn->query("SELECT * FROM payments where tenant_id =".$row['id']." order by unix_timestamp(date_created) desc limit 1");
-									$paid = $paid->num_rows > 0 ? $paid->fetch_array()['paid'] : 0;
-									$last_payment = $last_payment->num_rows > 0 ? date("M d, Y",strtotime($last_payment->fetch_array()['date_created'])) : 'N/A';
-									$outstanding = $payable - $paid;
+									$owner = $row['id'];
+									$house = $conn->query("SELECT sum(houses.price) as price, count(*) as house_count FROM houses where owner_id = '$owner' and is_selled = 1")->fetch_assoc();
+									$purches = $conn->query("SELECT p.*, sum(h.price) as house_rent_price, count(h.id) as house_rent_count  FROM purches p join houses h on h.id = p.house_id where user_id = '$owner'")->fetch_assoc();
+
 								?>
 								<tr>
 									<td class="text-center"><?php echo $i++ ?></td>
@@ -53,22 +49,22 @@
 										<?php echo ucwords($row['name']) ?>
 									</td>
 									<td class="">
-										 <p> <b><?php echo $row['house_no'] ?></b></p>
+										 <p> <b><?php echo $house['house_count'] ?></b></p>
 									</td>
 									<td class="">
-										 <p> <b><?php echo number_format($row['price'],2) ?></b></p>
+										 <p> <b><?php echo number_format($house['price'],2) ?></b></p>
 									</td>
 									<td class="text-right">
-										 <p> <b><?php echo number_format($outstanding,2) ?></b></p>
+										 <p> <b><?php echo $purches['house_rent_price'] ?></b></p>
 									</td>
 									<td class="">
-										 <p><b><?php echo  $last_payment ?></b></p>
+										 <p><b><?php echo  $purches['house_rent_count'] ?></b></p>
 									</td>
-									<td class="text-center">
+									<!-- <td class="text-center">
 										<button class="btn btn-sm btn-outline-primary view_payment" type="button" data-id="<?php echo $row['id'] ?>" >View</button>
 										<button class="btn btn-sm btn-outline-primary edit_tenant" type="button" data-id="<?php echo $row['id'] ?>" >Edit</button>
 										<button class="btn btn-sm btn-outline-danger delete_tenant" type="button" data-id="<?php echo $row['id'] ?>">Delete</button>
-									</td>
+									</td> -->
 								</tr>
 								<?php endwhile; ?>
 							</tbody>
@@ -91,7 +87,7 @@
 	}
 	img{
 		max-width:100px;
-		max-height: :150px;
+		max-height:150px;
 	}
 </style>
 <script>
