@@ -115,12 +115,14 @@ if (isset($_POST['purches_house'])) {
   $price = $house['price'];
   $user_id = $user['id'];
   $owner_id = $house['owner_id'];
-
+  if ($owner_id == $user_id) {
+    $_SESSION['success'] = "This your house!";
+    return false;
+  }
   $query = "INSERT INTO purches (house_id, seller_id, user_id, price) 
   VALUES('$house_id', '$owner_id', '$user_id', '$price')";
   mysqli_query($db, $query);
   $data = " is_selled = '1' ";
-  $data .= ", owner_id = '$user_id'";
   $db->query("UPDATE houses set $data where id = $house_id");
 
   $to = 'safiul7303@gmail.com'; 
@@ -138,7 +140,7 @@ if (isset($_POST['purches_house'])) {
   }else{ 
     echo 'Email sending failed.'; 
   }
-  $_SESSION['success'] = "Succefully Purchesed";
+  $_SESSION['success'] = "Successfully Rented";
   
 }
 
@@ -156,7 +158,7 @@ if (isset($_POST['house_save'])) {
     $data .= ", isGarage = '$is_garage' ";
     $data .= ", is_selled = '2' ";
     $data .= ", owner_id = '$user_id ' ";
-
+    $data .= ", address = '$address ' ";
 		if( count($_FILES['images']) > 0 ){
 			$image_names = '';
 			$uploads_dir = '../assets/uploads';

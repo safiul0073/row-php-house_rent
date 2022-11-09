@@ -22,47 +22,57 @@ if (isset($_GET['logout'])) {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href="style.css">
 <title>Edit Profile</title>
+<link href="../assets/css/frontend.css" rel="stylesheet">
 </head>
 <body>
 <!-- topbar and navigation -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="./">Property Seller</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+ <!-- topbar and navigation -->
+ <div class="rh-header">
+        <div class="container">
+            <div class="rh-header-inner">
+                <a href="#" class="rh-logo">
+                    <img src="../assets/images/Tcolor.png" alt="t-color">
+                </a>
+                <nav class="rh-nav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="./">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Houses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Rents</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contact Us</a>
+                        </li>
+                    </ul>
+                    <div class="form-inline my-2 my-lg-0">
+                        <?php if (isset($_SESSION['username'])) { ?>
+                            <div class="dropdown">
+                                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Dropdown
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                    <a class="dropdown-item" href="./dashboard.php">Dashboard</a>
+                                    <a class="dropdown-item" href="./profile.php">Profile</a>
+                                    <a onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();" class="dropdown-item" href="./login.php">Logout</a>
+                                    <form id="logout-form" action="logout.php" method="POST" class="d-none">
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="./">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Houses</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Rents</a>
-            </li>
-        </ul>
-        <div class="form-inline my-2 my-lg-0">
-        <?php if (isset($_SESSION['username'])) { ?>
-            <div class="dropdown">
-                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Dropdown
-                </button>
-                <div class="dropdown-menu bg-light" aria-labelledby="dropdownMenu2">
-                    <a class="dropdown-item " href="./dashboard.php" >Dashboard</a>
-                    <a class="dropdown-item" href="./profile.php" >Profile</a>
-                    <a class="dropdown-item" href="./login.php" >Logout</a>
-                </div>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php } else {  ?>
+                            <a class="rh-btn btn btn-sm btn-outline-primary mr-2" href="./login.php">Login</a>
+                            <a class="rh-btn btn btn-sm btn-outline-primary" href="./register.php">SignUp</a>
+                        <?php } ?>
+                    </div>
+                </nav>
             </div>
-        <?php } else {  ?>
-            <a class="btn btn-sm btn-outline-primary mr-2" href="./login.php">Login</a>
-            <a class="btn btn-sm btn-outline-primary" href="./register.php">SignUp</a>
-        <?php } ?>
         </div>
     </div>
-
-</nav>
 <?php if (isset($_SESSION['success'])) : ?>
     <div class="error success">
         <h3>
@@ -75,8 +85,6 @@ if (isset($_GET['logout'])) {
 <?php endif ?>
 
 <?php
-var_dump($_SESSION['username']);
-
     $username = $_SESSION['username'];
     $user = $db->query("SELECT * FROM users where username = '$username'")->fetch_assoc();
 ?>

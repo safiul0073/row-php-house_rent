@@ -10,7 +10,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link href="assets/css/frontend.css" rel="stylesheet">
+    <link href="../assets/css/frontend.css" rel="stylesheet">
     <title>Property Seller</title>
 </head>
 
@@ -122,30 +122,23 @@
         <div class="container">
             <h4 class="rh-sub-title">Properties by Area</h4>
             <div class="row">
+                <?php
+                    if ($results) {
+                        foreach ($results as $result) {
+                            ?>
+                    
                 <div class="col-sm-3">
+                    <a href="house_details.php?id=<?php echo $result['id']; ?>">
                     <div class="rh-service-card">
-                        <h5 class="property-count">4 Properties</h5>
-                        <h4 class="property-area">Malibagh</h4>
+                        <h5 class="property-count">Name: <?php echo $result['house_no']; ?></h5>
+                        <h4 class="property-area"><?php echo $result['address']; ?></h4>
                     </div>
+                    </a>
                 </div>
-                <div class="col-sm-3">
-                    <div class="rh-service-card">
-                        <h5 class="property-count">4 Properties</h5>
-                        <h4 class="property-area">Malibagh</h4>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="rh-service-card">
-                        <h5 class="property-count">4 Properties</h5>
-                        <h4 class="property-area">Malibagh</h4>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="rh-service-card">
-                        <h5 class="property-count">4 Properties</h5>
-                        <h4 class="property-area">Malibagh</h4>
-                    </div>
-                </div>
+               <?php
+                        }
+                    }
+                ?>
             </div>
         </div>
     </div>

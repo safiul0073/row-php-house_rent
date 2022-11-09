@@ -16,48 +16,56 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 
     <title><?php echo $row['house_no']; ?></title>
+    <link href="../assets/css/frontend.css" rel="stylesheet">
   </head>
   <body>
     <!-- topbar and navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="./">Property Seller</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <div class="rh-header">
+        <div class="container">
+            <div class="rh-header-inner">
+                <a href="#" class="rh-logo">
+                    <img src="../assets/images/Tcolor.png" alt="t-color">
+                </a>
+                <nav class="rh-nav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="./">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Houses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Rents</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contact Us</a>
+                        </li>
+                    </ul>
+                    <div class="form-inline my-2 my-lg-0">
+                        <?php if (isset($_SESSION['username'])) { ?>
+                            <div class="dropdown">
+                                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Dropdown
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                    <a class="dropdown-item" href="./dashboard.php">Dashboard</a>
+                                    <a class="dropdown-item" href="./profile.php">Profile</a>
+                                    <a onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();" class="dropdown-item" href="./login.php">Logout</a>
+                                    <form id="logout-form" action="logout.php" method="POST" class="d-none">
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="./">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Houses</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Rents</a>
-                </li>
-            </ul>
-            <div class="form-inline my-2 my-lg-0">
-            <?php if (isset($_SESSION['username'])) { ?>
-                <div class="dropdown">
-                    <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Dropdown
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                        <a class="dropdown-item" href="./dashboard.php" >Dashboard</a>
-                        <a class="dropdown-item" href="./profile.php" >Profile</a>
-                        <a class="dropdown-item" href="./login.php" >Logout</a>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php } else {  ?>
+                            <a class="rh-btn btn btn-sm btn-outline-primary mr-2" href="./login.php">Login</a>
+                            <a class="rh-btn btn btn-sm btn-outline-primary" href="./register.php">SignUp</a>
+                        <?php } ?>
                     </div>
-                </div>
-                
-            <?php } else {  ?>
-                <a class="btn btn-sm btn-outline-primary mr-2" href="./login.php">Login</a>
-                <a class="btn btn-sm btn-outline-primary" href="./register.php">SignUp</a>
-            <?php } ?>
+                </nav>
             </div>
         </div>
-    
-    </nav>
+    </div>
     <?php if (isset($_SESSION['success'])) : ?>
         <div class="alert alert-success">
             <h3>
@@ -72,7 +80,7 @@
     <!-- Optional JavaScript; choose one of the two! -->
     <div class="card mx-4" >
         <div class="card-header" >
-            <h1 class="card-title">House Number: <?php echo $row['house_no']; ?></h1>
+            <h1 class="card-title">House Name: <?php echo $row['house_no']; ?></h1>
         </div>
         <div class="card-body">
             <div class="row py-5">
@@ -142,15 +150,17 @@
                     <h3 class="text-left text-dark">Garage: <span><?php echo $row['isGarage'] ? "Yes" : "no"; ?></span></h3>
                     <div class="mt-2">
                         <?php
+                        if ($row['is_selled'] == 0) {
                         if (!isset($_SESSION['username'])) {
                             ?>
-                            <a href="./login.php" class="btn btn-outline-secondary" >Purchase Now</a>
+                            <a href="./login.php" class="btn btn-outline-secondary" >Rent Now</a>
                         <?php
                         }else {
                             ?> 
-                            <button type="button" class="btn btn-outline-secondary" <?php echo ($row['is_selled'] ? 'disabled' : ''); ?> data-toggle="modal" data-target="#exampleModal">Purchase Now</button>
+                            <button type="button" class="btn btn-outline-secondary" <?php echo ($row['is_selled'] ? 'disabled' : ''); ?> data-toggle="modal" data-target="#exampleModal">Rent Now</button>
                             <?php
                             }
+                        }
                             ?>
                         
                     </div>

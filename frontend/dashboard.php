@@ -32,47 +32,56 @@ if (isset($_GET['delete_id'])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>Dashboard</title>
+    <link href="../assets/css/frontend.css" rel="stylesheet">
   </head>
   <body>
     <!-- topbar and navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="./">Property Seller</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <div class="rh-header">
+        <div class="container">
+            <div class="rh-header-inner">
+                <a href="#" class="rh-logo">
+                    <img src="../assets/images/Tcolor.png" alt="t-color">
+                </a>
+                <nav class="rh-nav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="./">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Houses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Rents</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contact Us</a>
+                        </li>
+                    </ul>
+                    <div class="form-inline my-2 my-lg-0">
+                        <?php if (isset($_SESSION['username'])) { ?>
+                            <div class="dropdown">
+                                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Dropdown
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                    <a class="dropdown-item" href="./dashboard.php">Dashboard</a>
+                                    <a class="dropdown-item" href="./profile.php">Profile</a>
+                                    <a onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();" class="dropdown-item" href="./login.php">Logout</a>
+                                    <form id="logout-form" action="logout.php" method="POST" class="d-none">
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="./">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Houses</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Rents</a>
-                </li>
-            </ul>
-            <div class="form-inline my-2 my-lg-0">
-            <?php if (isset($_SESSION['username'])) { ?>
-                <div class="dropdown">
-                    <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Dropdown
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                        <a class="dropdown-item" href="./dashboard.php" >Dashboard</a>
-                        <a class="dropdown-item" href="./profile.php" >Profile</a>
-                        <a class="dropdown-item" href="./login.php" >Logout</a>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php } else {  ?>
+                            <a class="rh-btn btn btn-sm btn-outline-primary mr-2" href="./login.php">Login</a>
+                            <a class="rh-btn btn btn-sm btn-outline-primary" href="./register.php">SignUp</a>
+                        <?php } ?>
                     </div>
-                </div>
-            <?php } else {  ?>
-                <a class="btn btn-sm btn-outline-primary mr-2" href="./login.php">Login</a>
-                <a class="btn btn-sm btn-outline-primary" href="./register.php">SignUp</a>
-            <?php } ?>
+                </nav>
             </div>
         </div>
-    
-    </nav>
+    </div>
     <?php if (isset($_SESSION['success'])) : ?>
         <div class="error success">
             <h3>
@@ -132,6 +141,10 @@ if (isset($_GET['delete_id'])) {
                     <input type="number" id="price" name="price" value="<?php echo isset($house['price']) ? $house['price'] : ''; ?>" require class="form-control">
                 </div>
                 <div class="from-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" value="<?php echo isset($house['address']) ? $house['address'] : ''; ?>" require class="form-control">
+                </div>
+                <div class="from-group">
                     <label for="is_garage">Garage</label>
                     <select class="form-control" name="is_garage" id="">
                         <option <?php echo isset($house['isGarage']) && $house['isGarage'] == 1? 'selected' : ''; ?> value="1">Yes</option>
@@ -162,8 +175,9 @@ if (isset($_GET['delete_id'])) {
                     $user = $db->query("SELECT * FROM users where username = '$username'")->fetch_assoc();
                     $user_id = $user['id'];
                     $i = 1;
-                    $house = $db->query("SELECT h.*,c.name as cname FROM houses h inner join categories c on c.id = h.category_id where h.owner_id = '$user_id' order by id asc");
+                    $house = $db->query("SELECT h.*,c.name as cname, p.user_id as user  FROM houses h inner join categories c on c.id = h.category_id inner join purches p on p.house_id = h.id  order by id asc");
                     while($row=$house->fetch_assoc()):
+                        if ($row['user'] == $user_id || $row['owner_id'] == $user_id) {
                     ?>
                     <tr>
                         <td class="text-center"><?php echo $i++ ?></td>
@@ -178,7 +192,12 @@ if (isset($_GET['delete_id'])) {
                         <td class="text-center">
                         <?php
                             if ($row['is_selled'] == 1) {
-                                echo '<span class="badge badge-pill badge-success">Own</span>';
+                                if ($row['owner_id'] != $user_id) {
+                                    echo '<span class="badge badge-pill badge-success">Rental</span>';
+                                }else{
+                                    echo '<span class="badge badge-pill badge-success">Rented</span>';
+                                }
+                                
                             }else if ($row['is_selled'] == 2) {
                                 echo '<span class="badge badge-pill badge-warning">Pending</span>';
                             }else {
@@ -187,11 +206,21 @@ if (isset($_GET['delete_id'])) {
                             ?>
                         </td>
                         <td class="text-center">
-                            <a class="btn btn-sm btn-primary" href="dashboard.php?edit_id=<?php echo $row['id'] ?>" >Edit</a>
-                            <a class="btn btn-sm btn-danger" href="dashboard.php?delete_id=<?php echo $row['id'] ?>">Delete</a>
+                            <?php 
+                                if ($row['user'] == $user_id) {
+                                    ?>
+                                        <a class="btn btn-sm btn-secondary" href="house_details.php?id=<?php echo $row['id'] ?>">View</a>
+                                    <?php
+                                }else {
+                                    ?>
+                                    <a class="btn btn-sm btn-primary" href="dashboard.php?edit_id=<?php echo $row['id'] ?>" >Edit</a>
+                                    <a class="btn btn-sm btn-danger" href="dashboard.php?delete_id=<?php echo $row['id'] ?>">Delete</a>
+                                <?php
+                                }
+                                ?>
                         </td>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php } endwhile; ?>
                 </tbody>
 			</table>
         </div>
